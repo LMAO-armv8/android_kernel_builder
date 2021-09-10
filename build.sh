@@ -145,14 +145,15 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 	elif [ $COMPILER = "aosp" ]
 	then
 		msg "|| Cloning AOSP Clang ||"
+                cd $KERNEL_DIR
                 mkdir clang && cd clang
                 wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/master/clang-r399163b.tar.gz
                 tar -xvf clang.tar.gz
                 rm -rf clang.tar.gz
-                cd ..
+                cd ../..
 
                 msg "|| Cloning toolchain ||"
-                git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc64
+                git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 $KERNEL_DIR/gcc64
 
 	elif [ $COMPILER = "clangxgcc" ]
 	then
