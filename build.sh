@@ -62,7 +62,7 @@ BUILD_TYPE="Release"
 
 # Specify compiler.
 # 'clang' or 'clangxgcc' or 'gcc'
-COMPILER=clang
+COMPILER=aosp
 
 # Kernel is LTO
 LTO=0
@@ -141,7 +141,17 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 		msg "|| Cloning GCC 12.0.0 Bare Metal ||"
 		git clone https://github.com/mvaisakh/gcc-arm64.git $KERNEL_DIR/gcc64 --depth=1
         git clone https://github.com/mvaisakh/gcc-arm.git $KERNEL_DIR/gcc32 --depth=1
-
+        
+	elif [ $COMPILER = "aosp" ]
+	then
+		msg "|| Cloning AOSP Clang ||"
+                mkdir clang && cd clang
+                wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/master/clang-r399163b.tar.gz
+                tar -xvf clang.tar.gz
+                rm -rf clang.tar.gz
+                git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc64
+                cd ..
+	
 	elif [ $COMPILER = "clangxgcc" ]
 	then
 		msg "|| Cloning toolchain ||"
