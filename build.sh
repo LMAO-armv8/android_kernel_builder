@@ -32,7 +32,7 @@ installDependencies
 
 ## clone Kernel
 echo "Cloning Kernel"
-git clone https://github.com/divyam234/android_kernel_asus_sdm660 -b eleven kernel
+git clone https://github.com/manudinath/android_kernel_samsung_f41.git -b lineage-17.1 kernel
 
 ##------------------------------------------------------##
 ##----------Basic Informations, COMPULSORY--------------##
@@ -42,20 +42,20 @@ KERNEL_DIR=$(pwd)/kernel
 cd $KERNEL_DIR
 
 # The name of the device for which the kernel is built
-MODEL="Asus Zenfone Max Pro M2"
+MODEL="Samsung Galaxy F41"
 
 # The codename of the device
-DEVICE="X01BD"
+DEVICE="f41"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=X01BD_defconfig
+DEFCONFIG=exynos9610-f41dd_defconfig
 
 # Show manufacturer info
-MANUFACTURERINFO="ASUSTek Computer Inc."
+MANUFACTURERINFO="Scamsung"
 
 # Kernel Variant
-VARIANT=perf
+VARIANT=stock
 
 # Build Type
 BUILD_TYPE="Release"
