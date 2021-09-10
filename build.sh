@@ -375,9 +375,9 @@ build_kernel() {
 	elif [ $COMPILER = "aosp" ]
         then
 		make -j"$PROCS" O=out \
-				CROSS_COMPILE=aarch64-linux-gnu- \
-				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-				CC=clang \
+				CROSS_COMPILE=aarch64-linux-android- \
+				CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+				CC=$KERNEL_DIR/clang/bin/clang \
 				AR=llvm-ar \
 				OBJDUMP=llvm-objdump \
 				CLANG_TRIPLE=aarch64-linux-gnu- \
