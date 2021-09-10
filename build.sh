@@ -30,10 +30,6 @@ sudo apt -y install git automake lzop bison gperf build-essential zip \
 
 installDependencies
 
-
-## give chmod permissions 
-sudo chmod 777 * -R
-
 ## clone Kernel
 echo "Cloning Kernel"
 git clone https://github.com/manudinath/android_kernel_samsung_f41 -b lineage-17.1 kernel
