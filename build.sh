@@ -66,7 +66,7 @@ BUILD_TYPE="Release"
 
 # Specify compiler.
 # 'clang' or 'clangxgcc' or 'gcc' or 'aosp'
-COMPILER=aosp
+COMPILER=clang
 
 # Kernel is LTO
 LTO=0
