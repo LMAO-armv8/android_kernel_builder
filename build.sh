@@ -376,28 +376,11 @@ build_kernel() {
 	elif [ $COMPILER = "aosp" ]
         then
 		make -j"$PROCS" O=out \
-				CROSS_COMPILE=$KERNEL_DIR/gcc64/bin/aarch64-linux-android- \
-				CROSS_COMPILE_ARM32=$KERNEL_DIR/gcc64/bin/arm-linux-androideabi- \
-				CC=$KERNEL_DIR/clang/bin/clang \
-				CLANG_TRIPLE=$(CROSS_COMPILE) \
-                                AS=$(CROSS_COMPILE)as \
-                                LD=$(CROSS_COMPILE)ld \
-                                LDGOLD=$(CROSS_COMPILE)ld.gold \
-                                CC=$(CROSS_COMPILE)gcc \
-                                CPP=$(CC) -E \
-                                AR=$(CROSS_COMPILE)ar \
-                                NM=$(CROSS_COMPILE)nm \
-                                STRIP=$(CROSS_COMPILE)strip \
-                                OBJCOPY=$(CROSS_COMPILE)objcopy \
-                                OBJDUMP=$(CROSS_COMPILE)objdump \
-                                AWK=awk \
-                                GENKSYMS=scripts/genksyms/genksyms \
-                                INSTALLKERNEL:=installkernel \
-                                DEPMOD=/sbin/depmod \
-                                PERL=perl \
-                                PYTHON=python \
-                                CHECK=sparse "${MAKE[@]}" 2>&1 | tee build.log
-
+                                COMPILER = $KERNEL_DIR/clang/linux-x86/clang-r353983c/bin/clang               
+                                CROSS_COMPILE = aarch64-linux-android-4.9/bin/aarch64-linux-android-
+                                CROSS_COMPILE_ARM32 = arm-linux-androideabi-4.9/bin arm-linux-androideabi-
+                                CLANG_TRIPLE = aarch64-linux-gnu-                               
+                                CC = clang
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
