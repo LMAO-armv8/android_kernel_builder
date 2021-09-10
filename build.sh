@@ -352,7 +352,7 @@ build_kernel() {
 	BUILD_START=$(date +"%s")
 
 	if [ $COMPILER = "clang" ]
-	then
+           then
 		make -j"$PROCS" O=out \
 				CROSS_COMPILE=aarch64-linux-gnu- \
 				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
@@ -362,16 +362,45 @@ build_kernel() {
 				STRIP=llvm-strip "${MAKE[@]}" 2>&1 | tee build.log
 
 	elif [ $COMPILER = "gcc" ]
-	then
+          then
 		make -j"$PROCS" O=out \
 				CROSS_COMPILE_ARM32=arm-eabi- \
 				CROSS_COMPILE=aarch64-elf- \
 				AR=aarch64-elf-ar \
 				OBJDUMP=aarch64-elf-objdump \
 				STRIP=aarch64-elf-strip
+        
+	if [ $COMPILER = "aosp" ]
+           then
+		make -j"$PROCS" O=out \
+				CROSS_COMPILE=aarch64-linux-gnu- \
+				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+				CC=clang \
+				AR=llvm-ar \
+				OBJDUMP=llvm-objdump \
+				CLANG_TRIPLE=aarch64-linux-gnu- \
+                                AS		= $(CROSS_COMPILE)as \
+                                LD		= $(CROSS_COMPILE)ld \
+                                LDGOLD		= $(CROSS_COMPILE)ld.gold \
+                                CC		= $(CROSS_COMPILE)gcc \
+                                CPP		= $(CC) -E \
+                                AR		= $(CROSS_COMPILE)ar \
+                                NM		= $(CROSS_COMPILE)nm \
+                                STRIP		= $(CROSS_COMPILE)strip \
+                                OBJCOPY		= $(CROSS_COMPILE)objcopy \
+                                OBJDUMP		= $(CROSS_COMPILE)objdump \
+                                AWK		= awk \
+                                GENKSYMS	= scripts/genksyms/genksyms \
+                                INSTALLKERNEL  := installkernel \
+                                DEPMOD		= /sbin/depmod \
+                                PERL		= perl \
+                                PYTHON		= python \
+                                CHECK		= sparse "${MAKE[@]}" 2>&1 | tee build.log
 
+	
+	
 	elif [ $COMPILER = "clangxgcc" ]
-	then
+          then
 		make -j"$PROCS"  O=out \
 					CC=clang \
 					CROSS_COMPILE=aarch64-linux-gnu- \
