@@ -140,8 +140,8 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 	then
 		msg "|| Cloning GCC 12.0.0 Bare Metal ||"
 		git clone https://github.com/mvaisakh/gcc-arm64.git $KERNEL_DIR/gcc64 --depth=1
-        git clone https://github.com/mvaisakh/gcc-arm.git $KERNEL_DIR/gcc32 --depth=1
-        
+                git clone https://github.com/mvaisakh/gcc-arm.git $KERNEL_DIR/gcc32 --depth=1
+
 	elif [ $COMPILER = "aosp" ]
 	then
 		msg "|| Cloning AOSP Clang ||"
@@ -151,7 +151,7 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
                 rm -rf clang.tar.gz
                 git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc64
                 cd ..
-	
+
 	elif [ $COMPILER = "clangxgcc" ]
 	then
 		msg "|| Cloning toolchain ||"
@@ -201,21 +201,21 @@ exports() {
 	export SUBARCH=arm64
 
 	if [ $COMPILER = "clang" ]
-           then
+        then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
-		
+
         elif [ $COMPILER = "aosp" ]
-           then
+        then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
-		
+
 	elif [ $COMPILER = "clangxgcc" ]
-           then
+        then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin:$GCC64_DIR/bin:$GCC32_DIR/bin:/usr/bin:$PATH
 	elif [ $COMPILER = "gcc" ]
-           then
+        then
 		KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
 		PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 	fi
@@ -352,7 +352,7 @@ build_kernel() {
 	BUILD_START=$(date +"%s")
 
 	if [ $COMPILER = "clang" ]
-           then
+        then
 		make -j"$PROCS" O=out \
 				CROSS_COMPILE=aarch64-linux-gnu- \
 				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
@@ -362,7 +362,7 @@ build_kernel() {
 				STRIP=llvm-strip "${MAKE[@]}" 2>&1 | tee build.log
 
 	elif [ $COMPILER = "gcc" ]
-          then
+        then
 		make -j"$PROCS" O=out \
 				CROSS_COMPILE_ARM32=arm-eabi- \
 				CROSS_COMPILE=aarch64-elf- \
@@ -371,7 +371,7 @@ build_kernel() {
 				STRIP=aarch64-elf-strip
         
 	if [ $COMPILER = "aosp" ]
-           then
+        then
 		make -j"$PROCS" O=out \
 				CROSS_COMPILE=aarch64-linux-gnu- \
 				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
@@ -379,28 +379,28 @@ build_kernel() {
 				AR=llvm-ar \
 				OBJDUMP=llvm-objdump \
 				CLANG_TRIPLE=aarch64-linux-gnu- \
-                                AS		= $(CROSS_COMPILE)as \
-                                LD		= $(CROSS_COMPILE)ld \
-                                LDGOLD		= $(CROSS_COMPILE)ld.gold \
-                                CC		= $(CROSS_COMPILE)gcc \
-                                CPP		= $(CC) -E \
-                                AR		= $(CROSS_COMPILE)ar \
-                                NM		= $(CROSS_COMPILE)nm \
-                                STRIP		= $(CROSS_COMPILE)strip \
-                                OBJCOPY		= $(CROSS_COMPILE)objcopy \
-                                OBJDUMP		= $(CROSS_COMPILE)objdump \
-                                AWK		= awk \
-                                GENKSYMS	= scripts/genksyms/genksyms \
-                                INSTALLKERNEL  := installkernel \
-                                DEPMOD		= /sbin/depmod \
-                                PERL		= perl \
-                                PYTHON		= python \
-                                CHECK		= sparse "${MAKE[@]}" 2>&1 | tee build.log
+                                AS=$(CROSS_COMPILE)as \
+                                LD=$(CROSS_COMPILE)ld \
+                                LDGOLD=$(CROSS_COMPILE)ld.gold \
+                                CC=$(CROSS_COMPILE)gcc \
+                                CPP=$(CC) -E \
+                                AR=$(CROSS_COMPILE)ar \
+                                NM=$(CROSS_COMPILE)nm \
+                                STRIP=$(CROSS_COMPILE)strip \
+                                OBJCOPY=$(CROSS_COMPILE)objcopy \
+                                OBJDUMP=$(CROSS_COMPILE)objdump \
+                                AWK=awk \
+                                GENKSYMS=scripts/genksyms/genksyms \
+                                INSTALLKERNEL:=installkernel \
+                                DEPMOD=/sbin/depmod \
+                                PERL=perl \
+                                PYTHON=python \
+                                CHECK=sparse "${MAKE[@]}" 2>&1 | tee build.log
 
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
-          then
+        then
 		make -j"$PROCS"  O=out \
 					CC=clang \
 					CROSS_COMPILE=aarch64-linux-gnu- \
