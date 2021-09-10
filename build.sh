@@ -61,7 +61,7 @@ VARIANT=stock
 BUILD_TYPE="Release"
 
 # Specify compiler.
-# 'clang' or 'clangxgcc' or 'gcc' or 'aosp'
+# 'clang' or 'clangxgcc' or 'gcc'
 COMPILER=clang
 
 # Kernel is LTO
@@ -135,22 +135,12 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 	then
 		msg "|| Cloning toolchain ||"
 		git clone --depth=1 https://github.com/kdrag0n/proton-clang -b master $KERNEL_DIR/clang
-        
-        elif [ $COMPILER = "aosp" ]
-	then
-		msg "|| Cloning AOSP Clang ||"
-                mkdir clang && cd clang
-		wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/master/clang-r399163b.tar.gz
-		tar -xf clang.tar.gz -C clang
-		rm -rf clang.tar.gz
-		git clone depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc64
-		cd ..
-		
+
 	elif [ $COMPILER = "gcc" ]
 	then
 		msg "|| Cloning GCC 12.0.0 Bare Metal ||"
 		git clone https://github.com/mvaisakh/gcc-arm64.git $KERNEL_DIR/gcc64 --depth=1
-                git clone https://github.com/mvaisakh/gcc-arm.git $KERNEL_DIR/gcc32 --depth=1
+        git clone https://github.com/mvaisakh/gcc-arm.git $KERNEL_DIR/gcc32 --depth=1
 
 	elif [ $COMPILER = "clangxgcc" ]
 	then
@@ -204,12 +194,6 @@ exports() {
 	then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
-		
-        elif [ $COMPILER = "aosp" ]
-	then
-		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-		PATH=$TC_DIR/bin/:$PATH
-	
 	elif [ $COMPILER = "clangxgcc" ]
 	then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
@@ -361,33 +345,6 @@ build_kernel() {
 				OBJDUMP=llvm-objdump \
 				STRIP=llvm-strip "${MAKE[@]}" 2>&1 | tee build.log
 
-        if [ $COMPILER = "aosp" ]
-	then
-		make -j"$PROCS" O=out \
-				CROSS_COMPILE=aarch64-linux-gnu- \
-				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-				CC=clang \
-				AR=llvm-ar \
-				OBJDUMP=llvm-objdump \
-				CLANG_TRIPLE=aarch64-linux-gnu- \
-                                AS		= $(CROSS_COMPILE)as \
-                                LD		= $(CROSS_COMPILE)ld \
-                                LDGOLD		= $(CROSS_COMPILE)ld.gold \
-                                CC		= $(CROSS_COMPILE)gcc \
-                                CPP		= $(CC) -E \
-                                AR		= $(CROSS_COMPILE)ar \
-                                NM		= $(CROSS_COMPILE)nm \
-                                STRIP		= $(CROSS_COMPILE)strip \
-                                OBJCOPY		= $(CROSS_COMPILE)objcopy \
-                                OBJDUMP		= $(CROSS_COMPILE)objdump \
-                                AWK		= awk \
-                                GENKSYMS	= scripts/genksyms/genksyms \
-                                INSTALLKERNEL  := installkernel \
-                                DEPMOD		= /sbin/depmod \
-                                PERL		= perl \
-                                PYTHON		= python \
-                                CHECK		= sparse "${MAKE[@]}" 2>&1 | tee build.log
-				
 	elif [ $COMPILER = "gcc" ]
 	then
 		make -j"$PROCS" O=out \
@@ -460,7 +417,7 @@ gen_zip() {
     cp -af anykernel-real.sh anykernel.sh
 	sed -i "s/kernel.string=.*/kernel.string=Lmao-CAF-STABLE/g" anykernel.sh
 	sed -i "s/kernel.for=.*/kernel.for=$VARIANT/g" anykernel.sh
-	sed -i "s/kernel.compiler=.*/kernel.compiler=clang/g" anykernel.sh
+	sed -i "s/kernel.compiler=.*/kernel.compiler=proton-clang/g" anykernel.sh
 	sed -i "s/kernel.made=.*/kernel.made=Bounty Hunter/g" anykernel.sh
 	sed -i "s/kernel.version=.*/kernel.version=$LINUXVER/g" anykernel.sh
 	sed -i "s/build.date=.*/build.date=$DATE/g" anykernel.sh
