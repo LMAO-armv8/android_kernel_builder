@@ -149,8 +149,10 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
                 wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/master/clang-r399163b.tar.gz
                 tar -xvf clang.tar.gz
                 rm -rf clang.tar.gz
-                git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc64
                 cd ..
+
+                msg "|| Cloning toolchain ||"
+                git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc64
 
 	elif [ $COMPILER = "clangxgcc" ]
 	then
@@ -233,7 +235,7 @@ exports() {
 	BOT_BUILD_URL="https://api.telegram.org/bot$TOKEN/sendDocument"
 	PROCS=$(nproc)
 
-	if [ $COMPILER = "gcc" ];then
+   if [ $COMPILER = "gcc" ];then
 
     if [ -e $GCC64_DIR/bin/aarch64-elf-gcc ];then
         gcc64Type="$($GCC64_DIR/bin/aarch64-elf-gcc --version | head -n 1)"
@@ -370,7 +372,7 @@ build_kernel() {
 				OBJDUMP=aarch64-elf-objdump \
 				STRIP=aarch64-elf-strip
         
-	if [ $COMPILER = "aosp" ]
+	elif [ $COMPILER = "aosp" ]
         then
 		make -j"$PROCS" O=out \
 				CROSS_COMPILE=aarch64-linux-gnu- \
