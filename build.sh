@@ -113,7 +113,7 @@ SILENCE=0
 
 # Debug purpose. Send logs on every successfull builds
 # 1 is YES | 0 is NO(default)
-LOG_DEBUG=0
+LOG_DEBUG=1
 
 ##------------------------------------------------------##
 ##---------Do Not Touch Anything Beyond This------------##
@@ -308,12 +308,12 @@ build_kernel() {
 
 	if [ "$PTTG" = 1 ]
  	then
-            tg_post_msg "<b>🔨 Redux Kernel Build Triggered</b>
+            tg_post_msg "<b>🔨 Lmao Kernel Build Triggered</b>
 <b>Host Core Count : </b><code>$PROCS</code>
 <b>Device: </b><code>$MODEL</code>
 <b>Codename: </b><code>$DEVICE</code>
 <b>Build Date: </b><code>$DATE</code>
-<b>Kernel Name: </b><code>Redux-$VARIANT-$DEVICE</code>
+<b>Kernel Name: </b><code>Lmao-$VARIANT-$DEVICE</code>
 <b>Linux Tag Version: </b><code>$LINUXVER</code>"
 
 	fi
@@ -415,7 +415,7 @@ gen_zip() {
 	cd $AK_DIR
 	#cp -af "$KERNEL_DIR"/init.ElectroSpectrum.rc init.spectrum.rc && sed -i "s/persist.spectrum.kernel.*/persist.spectrum.kernel ElectroPerf-LTO-$VARIANT-v2.3/g" init.spectrum.rc
     cp -af anykernel-real.sh anykernel.sh
-	sed -i "s/kernel.string=.*/kernel.string=Redux-CAF-STABLE/g" anykernel.sh
+	sed -i "s/kernel.string=.*/kernel.string=Lmao-CAF-STABLE/g" anykernel.sh
 	sed -i "s/kernel.for=.*/kernel.for=$VARIANT/g" anykernel.sh
 	sed -i "s/kernel.compiler=.*/kernel.compiler=proton-clang/g" anykernel.sh
 	sed -i "s/kernel.made=.*/kernel.made=Bounty Hunter/g" anykernel.sh
