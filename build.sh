@@ -74,14 +74,14 @@ LINKER=ld.lld
 # Clean source prior building. 1 is NO(default) | 0 is YES
 INCREMENTAL=0
 
-TOKEN=$TELEGRAM_TOKEN
+TOKEN=1769492495:AAGkskpHEME92_Xo1Qsb_7RzYrS-1zNx6NE
 
 # Push ZIP to Telegram. 1 is YES | 0 is NO(default)
 PTTG=1
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID=$TELEGRAM_CHATID
+		CHATID=-492676442
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
