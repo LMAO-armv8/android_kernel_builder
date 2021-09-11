@@ -147,13 +147,13 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 		msg "|| Cloning AOSP Clang ||"
                 cd $KERNEL_DIR
                 mkdir clang && cd clang
-                wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/master/clang-r399163b.tar.gz
-                tar -xvf clang.tar.gz
+                wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r48/clang-4691093.tar.gz
+                tar -zxvf clang.tar.gz
                 rm -rf clang.tar.gz
                 cd ../..
 
                 msg "|| Cloning toolchain ||"
-                git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 $KERNEL_DIR/gcc64
+                git clone  https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
 
 	elif [ $COMPILER = "clangxgcc" ]
 	then
@@ -375,12 +375,11 @@ build_kernel() {
         
 	elif [ $COMPILER = "aosp" ]
         then
-		make -j"$PROCS" O=out \
-                                COMPILER = $KERNEL_DIR/clang/linux-x86/clang-r353983c/bin/clang               
-                                CROSS_COMPILE = aarch64-linux-android-4.9/bin/aarch64-linux-android-
-                                CROSS_COMPILE_ARM32 = arm-linux-androideabi-4.9/bin arm-linux-androideabi-
-                                CLANG_TRIPLE = aarch64-linux-gnu-                               
-                                CC = clang
+		make -j"$PROCS" O=out \             
+                                CROSS_COMPILE = $KERNEL_DIR/toolchain/bin/aarch64-linux-android- \
+                                CROSS_COMPILE_ARM32 = $KERNEL_DIR/toolchain/bin/aarch64-linux-androideabi- \
+                                CLANG_TRIPLE =                  
+                                CC = $KERNEL_DIR/clang/bin/clang
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
