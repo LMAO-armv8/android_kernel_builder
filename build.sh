@@ -377,9 +377,8 @@ build_kernel() {
         then
 		make -j"$PROCS" O=out \             
                                 CROSS_COMPILE = $KERNEL_DIR/toolchain/bin/aarch64-linux-android- \
-                                CROSS_COMPILE_ARM32 = $KERNEL_DIR/toolchain/bin/aarch64-linux-androideabi- \
-                                CLANG_TRIPLE =                  
-                                CC = $KERNEL_DIR/clang/bin/clang
+                                CLANG_TRIPLE = aarch64-linux-gnu- \
+                                CC = $KERNEL_DIR/clang/bin/clang "${MAKE[@]}" 2>&1 | tee build.log
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
