@@ -145,15 +145,15 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 	elif [ $COMPILER = "aosp" ]
 	then
 		msg "|| Cloning AOSP Clang ||"
-                cd $KERNEL_DIR
-                mkdir clang && cd clang
-                wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r48/clang-4691093.tar.gz
-                tar -zxvf clang.tar.gz
-                rm -rf clang.tar.gz
-                cd ../..
+             #   cd $KERNEL_DIR
+             #   mkdir clang && cd clang
+             #   wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r48/clang-4691093.tar.gz
+             #   tar -zxvf clang.tar.gz
+             #   rm -rf clang.tar.gz
+             #   cd ../..
 
                 msg "|| Cloning toolchain ||"
-                git clone  https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 $KERNEL_DIR/toolchain
+              #  git clone  https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 $KERNEL_DIR/toolchain
 
 	elif [ $COMPILER = "clangxgcc" ]
 	then
@@ -376,9 +376,9 @@ build_kernel() {
 	elif [ $COMPILER = "aosp" ]
         then
 		make -j"$PROCS" O=out \             
-                                CROSS_COMPILE=$KERNEL_DIR/toolchain/bin/aarch64-linux-android- \
-                                CLANG_TRIPLE=$KERNEL_DIR/toochain/gas/linux-x86/aarch64-linux-gnu- \
-                                CC=$KERNEL_DIR/clang/bin/clang "${MAKE[@]}" 2>&1 | tee build.log
+                                CROSS_COMPILE=$KERNEL_DIR/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android- \
+                                CC=$KERNEL_DIR/prebuilts/clang/host/linux-x86/clang-r353983c1/bin/clang \
+                                CLANG_TRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
