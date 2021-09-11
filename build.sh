@@ -210,7 +210,7 @@ exports() {
 
         elif [ $COMPILER = "aosp" ]
         then
-		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+		KBUILD_COMPILER_STRING=$($KERNEL_DIR/prebuilts/clang/host/linux-x86/clang-r353983c1/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
 
 	elif [ $COMPILER = "clangxgcc" ]
