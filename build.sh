@@ -153,7 +153,7 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
                 cd ../..
 
                 msg "|| Cloning toolchain ||"
-                git clone  https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain
+                git clone  https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 $KERNEL_DIR/toolchain
 
 	elif [ $COMPILER = "clangxgcc" ]
 	then
