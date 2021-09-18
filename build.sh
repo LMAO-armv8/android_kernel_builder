@@ -373,8 +373,8 @@ build_kernel() {
 	elif [ $COMPILER = "aosp" ]
         then
 		make -j"$PROCS" O=out \             
-                                CROSS_COMPILE=$(pwd)/toolchain/bin/aarch64-linux-android- \
-                                CC=$(pwd)/clang/bin \
+                                CROSS_COMPILE=$KERNEL_DIR/toolchain/bin/aarch64-linux-android- \
+                                CC=$KERNEL_DIR/clang/bin \
                                 CLANGTRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
 	
 	
