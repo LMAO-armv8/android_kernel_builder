@@ -42,10 +42,11 @@ KERNEL_DIR=$(pwd)/kernel
 cd $KERNEL_DIR
 
 # The name of the device for which the kernel is built
-MODEL="Samsung Galaxy F41"
+MODEL="Scamsung Galaxy F41"
 
 # The codename of the device
 DEVICE="f41"
+CODENAME="SM-F415F"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
@@ -145,16 +146,12 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 	elif [ $COMPILER = "aosp" ]
 	then
 		msg "|| Cloning AOSP Clang ||"
-             #   cd $KERNEL_DIR
-             #   mkdir clang && cd clang
-             #   wget -O clang.tar.gz https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r48/clang-4691093.tar.gz
-             #   tar -zxvf clang.tar.gz
-             #   rm -rf clang.tar.gz
-             #   cd ../..
+                cd $(KERNEL_DIR) && mkdir clang && wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r6/clang-4639204.tar.gz && tar -xzvf *.tar.gz -O clang && rm clang-4639204.tar.gz
 
                 msg "|| Cloning toolchain ||"
-              #  git clone  https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 $KERNEL_DIR/toolchain
-
+                git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b ndk-release-r18 $KERNEL_DIR/gcc64
+                sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+		
 	elif [ $COMPILER = "clangxgcc" ]
 	then
 		msg "|| Cloning toolchain ||"
@@ -190,7 +187,7 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 # Function to replace defconfig versioning
 setversioning() {
     # For staging branch
-    KERNELNAME="Lmao-$LINUXVER-$VARIANT-SM-F415F-$(TZ=Asia/Kolkata date +"%Y-%m-%d-%s")"
+    KERNELNAME="Lmao-$LINUXVER-$VARIANT-$CODENAME-$(TZ=Asia/Kolkata date +"%Y-%m-%d-%s")"
     # Export our new localversion and zipnames
     export KERNELNAME
     export ZIPNAME="$KERNELNAME.zip"
@@ -210,7 +207,7 @@ exports() {
 
         elif [ $COMPILER = "aosp" ]
         then
-		KBUILD_COMPILER_STRING=$($KERNEL_DIR/prebuilts/clang/host/linux-x86/clang-r353983c1/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+		KBUILD_COMPILER_STRING=$($KERNEL_DIR/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
 
 	elif [ $COMPILER = "clangxgcc" ]
@@ -376,9 +373,9 @@ build_kernel() {
 	elif [ $COMPILER = "aosp" ]
         then
 		make -j"$PROCS" O=out \             
-                                CROSS_COMPILE=$KERNEL_DIR/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android- \
-                                CC=$KERNEL_DIR/prebuilts/clang/host/linux-x86/clang-r353983c1/bin/clang \
-                                CLANG_TRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
+                                CROSS_COMPILE=$(pwd)/toolchain/bin/aarch64-linux-android- \
+                                CC=$(pwd)/clang/bin \
+                                CLANGTRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
