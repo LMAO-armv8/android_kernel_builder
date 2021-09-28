@@ -146,10 +146,11 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 	elif [ $COMPILER = "aosp" ]
 	then
 		msg "|| Cloning AOSP Clang ||"
-                cd $KERNEL_DIR && mkdir clang && cd clang && wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/android-9.0.0_r6/clang-4639204.tar.gz && tar -xzvf *.tar.gz && rm clang-4639204.tar.gz
+                git clone --depth=1 https://github.com/dimas-ady/toolchain -b clang $KERNEL_DIR/clang
 
                 msg "|| Cloning toolchain ||"
-                git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b ndk-release-r18 $KERNEL_DIR/gcc64
+                git clone --depth=1 https://github.com/dimas-ady/toolchain -b gcc-4.9-aarch64 $KERNEL_DIR/gcc64
+	        git clone --depth=1 https://github.com/dimas-ady/toolchain -b gcc-4.9-arm $KERNEL_DIR/gcc32
                 sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 		
 	elif [ $COMPILER = "clangxgcc" ]
@@ -207,8 +208,10 @@ exports() {
 
         elif [ $COMPILER = "aosp" ]
         then
-		KBUILD_COMPILER_STRING=$($KERNEL_DIR/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-		PATH=$TC_DIR/bin/:$PATH
+		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1)
+	        PATH="$TC_DIR/bin:$GCC64_DIR/bin:$GCC32_DIR/bin:${PATH}"
+	        export LD=ld.lld
+		export LD_LIBRARY_PATH="$CLANG_DIR/lib64:$LD_LIBRARY_PATH"
 
 	elif [ $COMPILER = "clangxgcc" ]
         then
@@ -318,7 +321,6 @@ tg_send_files(){
 build_kernel() {
 	if [ $INCREMENTAL = 0 ]
 	then
-                export CCACHE_DIR=/hdd/.ccache
                 export TEMPORARY_DISABLE_PATH_RESTRICTIONS=true
 		
 		msg "|| Cleaning Sources ||"
@@ -376,30 +378,27 @@ build_kernel() {
         
 	elif [ $COMPILER = "aosp" ]
         then
-		make -j"$PROCS" O=out \             
-                                CROSS_COMPILE=$KERNEL_DIR/toolchain/bin/aarch64-linux-android- \
-                                CC=$KERNEL_DIR/clang/bin/clang \
-                                CLANGTRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
+		 "${MAKE[@]}" 2>&1 | tee build.log
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
         then
-		make -j"$PROCS"  O=out \
-					CC=clang \
-					CROSS_COMPILE=aarch64-linux-gnu- \
-					CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-					AR=llvm-ar \
-					AS=llvm-as \
-					NM=llvm-nm \
-					STRIP=llvm-strip \
-					OBJCOPY=llvm-objcopy \
-					OBJDUMP=llvm-objdump \
-					OBJSIZE=llvm-size \
-					READELF=llvm-readelf \
-					HOSTCC=clang \
-					HOSTCXX=clang++ \
-					HOSTAR=llvm-ar \
-					CLANG_TRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
+		make -j"$PROCS" O=out \
+			        CC=clang \
+				CROSS_COMPILE=aarch64-linux-gnu- \
+				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+				AR=llvm-ar \
+				AS=llvm-as \
+				NM=llvm-nm \
+				STRIP=llvm-strip \
+				OBJCOPY=llvm-objcopy \
+				OBJDUMP=llvm-objdump \
+				OBJSIZE=llvm-size \
+				READELF=llvm-readelf \
+				HOSTCC=clang \
+				HOSTCXX=clang++ \
+				HOSTAR=llvm-ar \
+				CLANG_TRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
 	fi
 
 		BUILD_END=$(date +"%s")
