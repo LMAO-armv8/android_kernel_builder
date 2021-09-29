@@ -324,7 +324,6 @@ build_kernel() {
                 export TEMPORARY_DISABLE_PATH_RESTRICTIONS=true
 		
 		msg "|| Cleaning Sources ||"
-                export CC=$KERNEL_DIR/clang/bin/clang
 		make clean && make mrproper && rm -rf out
 	fi
 
@@ -378,7 +377,22 @@ build_kernel() {
         
 	elif [ $COMPILER = "aosp" ]
         then
-		 "${MAKE[@]}" 2>&1 | tee build.log
+		 make -j"$PROCS" O=out \
+			        CC=clang \
+				CROSS_COMPILE=aarch64-linux-gnu- \
+				CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+				AR=llvm-ar \
+				AS=llvm-as \
+				NM=llvm-nm \
+				STRIP=llvm-strip \
+				OBJCOPY=llvm-objcopy \
+				OBJDUMP=llvm-objdump \
+				OBJSIZE=llvm-size \
+				READELF=llvm-readelf \
+				HOSTCC=clang \
+				HOSTCXX=clang++ \
+				HOSTAR=llvm-ar \
+				CLANG_TRIPLE=aarch64-linux-gnu- "${MAKE[@]}" 2>&1 | tee build.log
 	
 	
 	elif [ $COMPILER = "clangxgcc" ]
