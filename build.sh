@@ -32,7 +32,7 @@ installDependencies
 
 ## clone Kernel
 echo "Cloning Kernel"
-git clone https://github.com/manudinath/android_kernel_samsung_f41 -b lineage-17.1 kernel
+git clone https://github.com/LMAO-armv8/android_kernel_samsung_f41 -b lineage-17.1 kernel
 
 ##------------------------------------------------------##
 ##----------Basic Informations, COMPULSORY--------------##
@@ -45,8 +45,8 @@ cd $KERNEL_DIR
 MODEL="Scamsung Galaxy F41"
 
 # The codename of the device
-DEVICE="f41"
-CODENAME="SM-F415F"
+DEVICE="SM-F415F"
+CODENAME="f41"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
