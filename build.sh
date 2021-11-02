@@ -18,7 +18,7 @@ cdir() {
 		err "The directory $1 doesn't exists !"
 }
 
-installDependencies(){	
+installDependencies(){  
 sudo apt -y update 
 sudo apt -y install git automake lzop bison gperf build-essential zip \
  curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 \
@@ -59,7 +59,7 @@ MANUFACTURERINFO="Scamsung"
 VARIANT=stock
 
 # Build Type
-BUILD_TYPE="Release"
+BUILD_TYPE="Trial"
 
 # Specify compiler.
 # 'clang' or 'clangxgcc' or 'gcc'
@@ -132,7 +132,7 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 
  clone() {
 	echo " "
-	if [ $COMPILER = "clang" ]
+	if [ $COMPILER = "proton" ]
 	then
 		msg "|| Cloning toolchain ||"
 		git clone --depth=1 https://github.com/kdrag0n/proton-clang -b master $KERNEL_DIR/clang
@@ -143,7 +143,13 @@ DATE=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
 		git clone https://github.com/mvaisakh/gcc-arm64.git $KERNEL_DIR/gcc64 --depth=1
                 git clone https://github.com/mvaisakh/gcc-arm.git $KERNEL_DIR/gcc32 --depth=1
 
-	elif [ $COMPILER = "aosp" ]
+        elif [ $COMPILER == "gcc-4.9" ]
+	then
+		msg "|| Cloning AOSP GCC 4.9 ||"
+		git clone --depth=1 https://github.com/dimas-ady/toolchain -b gcc-4.9-aarch64 $KERNEL_DIR/gcc64
+		git clone --depth=1 https://github.com/dimas-ady/toolchain -b gcc-4.9-arm $KERNEL_DIR/gcc32
+		
+	elif [ $COMPILER = "clang" ]
 	then
 		msg "|| Cloning AOSP Clang ||"
                 git clone --depth=1 https://github.com/dimas-ady/toolchain -b clang $KERNEL_DIR/clang
@@ -201,12 +207,17 @@ exports() {
 	export ARCH=arm64
 	export SUBARCH=arm64
 
-	if [ $COMPILER = "clang" ]
+	if [ $COMPILER = "proton" ]
         then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
 
-        elif [ $COMPILER = "aosp" ]
+        elif [ $COMPILER == gcc-4.9 ]
+        then
+                KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-linux-android-gcc --version | head -n 1)
+	        PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
+        
+        elif [ $COMPILER = "clang" ]
         then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1)
 	        PATH="$TC_DIR/bin:$GCC64_DIR/bin:$GCC32_DIR/bin:${PATH}"
